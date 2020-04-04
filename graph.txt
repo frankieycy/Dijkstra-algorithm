@@ -1,0 +1,246 @@
+Codes: see graph.cpp
+
+Concepts learnt/reviewed:
+1. graph class
+- constructors, accessors, mutators
+2. priority queue
+- operator overloading (left bit shift operator overloaded), implementation of queue, use of pointers
+3. Dijkstra's algorithm
+- implementation of graph search (uniform cost search, in particular), use of vector data type
+
+My codes:
+The codes are divided into 4 parts:
+1. miscellaneous functions for printing vectors and generating random numbers
+2. node structure and priority queue class (note: member functions defined outside of class)
+3. graph class and Dijkstra's algorithm
+4. main function, where the graph class is instantiated with the required parameters and shortest paths are computed and output
+
+The shortest path algorithm: (vector<node>* Graph::shortestPaths(int n))
+Here's a flow chart of my implementation:
+1. initialize all node costs (tentative shortest distance from source node) to be infinity, except for the source node, which is set to 0
+2. add all nodes to a priority queue
+3. as the source node has node cost of 0, it has the highest priority, hence is the first to be popped
+4. once it is popped, update the tentative costs of its neighbors (note the priority queue would be re-ordered)
+5. if the cost of a neighbor node is updated, update the prev of the neighbor node
+6. after being popped, it is placed in the closed array, meaning it would be "expanded" agin
+7. repeat the cost update for the next node of the highest priority, and only expand it if it has not been expanded before (i.e., not in closed)
+8. the loop continues until the priority queue is empty, or terminates if the node of the highest priority is infinity, meaning the node is disconnected from the source node (no path exists between that node and the source node)
+9. from the prev array, the shortest paths from the source node to all other nodes are generated
+10. the shortest paths are stored as an array of vectors, each vector denoting the shortest path that leads from the source node
+11. print the shortest paths by using (void Graph::printShortestPaths(int n))
+
+Code output is attached below.
+This is directly obtainable from the codes if properly seeded with 0.
+Settings: (see main())
+1. size=50, density=.2, minCost=1, maxCost=10
+2. size=50, density=.4, minCost=1, maxCost=10
+/******************************************************************************/
+connected: 1
+------------------------
+(source node) shortest path from node 0 to node 0:
+  [ ]
+shortest path from node 0 to node 1:
+  [ (0,0), (5,4.16849), (26,6.08686), (1,10.1091) ]
+shortest path from node 0 to node 2:
+  [ (0,0), (2,5.90195) ]
+shortest path from node 0 to node 3:
+  [ (0,0), (2,5.90195), (3,6.95571) ]
+shortest path from node 0 to node 4:
+  [ (0,0), (2,5.90195), (4,10.5537) ]
+shortest path from node 0 to node 5:
+  [ (0,0), (5,4.16849) ]
+shortest path from node 0 to node 6:
+  [ (0,0), (2,5.90195), (6,9.88002) ]
+shortest path from node 0 to node 7:
+  [ (0,0), (2,5.90195), (3,6.95571), (7,9.62372) ]
+shortest path from node 0 to node 8:
+  [ (0,0), (46,5.8294), (8,9.11827) ]
+shortest path from node 0 to node 9:
+  [ (0,0), (9,4.82713) ]
+shortest path from node 0 to node 10:
+  [ (0,0), (10,9.59569) ]
+shortest path from node 0 to node 11:
+  [ (0,0), (33,4.92711), (11,8.14154) ]
+shortest path from node 0 to node 12:
+  [ (0,0), (33,4.92711), (15,6.07292), (48,7.39141), (12,10.6961) ]
+shortest path from node 0 to node 13:
+  [ (0,0), (2,5.90195), (3,6.95571), (13,14.0918) ]
+shortest path from node 0 to node 14:
+  [ (0,0), (18,4.97153), (14,10.0835) ]
+shortest path from node 0 to node 15:
+  [ (0,0), (33,4.92711), (15,6.07292) ]
+shortest path from node 0 to node 16:
+  [ (0,0), (16,6.39656) ]
+shortest path from node 0 to node 17:
+  [ (0,0), (33,4.92711), (17,9.61441) ]
+shortest path from node 0 to node 18:
+  [ (0,0), (18,4.97153) ]
+shortest path from node 0 to node 19:
+  [ (0,0), (41,6.35989), (21,7.5868), (19,9.04628) ]
+shortest path from node 0 to node 20:
+  [ (0,0), (46,5.8294), (42,9.35775), (20,10.9529) ]
+shortest path from node 0 to node 21:
+  [ (0,0), (41,6.35989), (21,7.5868) ]
+shortest path from node 0 to node 22:
+  [ (0,0), (33,4.92711), (22,9.86617) ]
+shortest path from node 0 to node 23:
+  [ (0,0), (16,6.39656), (23,8.70943) ]
+shortest path from node 0 to node 24:
+  [ (0,0), (35,6.28506), (24,10.9247) ]
+shortest path from node 0 to node 25:
+  [ (0,0), (9,4.82713), (25,10.1041) ]
+shortest path from node 0 to node 26:
+  [ (0,0), (5,4.16849), (26,6.08686) ]
+shortest path from node 0 to node 27:
+  [ (0,0), (33,4.92711), (15,6.07292), (27,7.39002) ]
+shortest path from node 0 to node 28:
+  [ (0,0), (46,5.8294), (8,9.11827), (28,10.3932) ]
+shortest path from node 0 to node 29:
+  [ (0,0), (29,5.68931) ]
+shortest path from node 0 to node 30:
+  [ (0,0), (33,4.92711), (15,6.07292), (27,7.39002), (30,9.49455) ]
+shortest path from node 0 to node 31:
+  [ (0,0), (46,5.8294), (31,8.30348) ]
+shortest path from node 0 to node 32:
+  [ (0,0), (46,5.8294), (42,9.35775), (32,11.9324) ]
+shortest path from node 0 to node 33:
+  [ (0,0), (33,4.92711) ]
+shortest path from node 0 to node 34:
+  [ (0,0), (33,4.92711), (15,6.07292), (27,7.39002), (34,8.9193) ]
+shortest path from node 0 to node 35:
+  [ (0,0), (35,6.28506) ]
+shortest path from node 0 to node 36:
+  [ (0,0), (33,4.92711), (15,6.07292), (36,9.73489) ]
+shortest path from node 0 to node 37:
+  [ (0,0), (37,7.23581) ]
+shortest path from node 0 to node 38:
+  [ (0,0), (16,6.39656), (38,8.77387) ]
+shortest path from node 0 to node 39:
+  [ (0,0), (46,5.8294), (39,8.1698) ]
+shortest path from node 0 to node 40:
+  [ (0,0), (33,4.92711), (15,6.07292), (40,10.0931) ]
+shortest path from node 0 to node 41:
+  [ (0,0), (41,6.35989) ]
+shortest path from node 0 to node 42:
+  [ (0,0), (46,5.8294), (42,9.35775) ]
+shortest path from node 0 to node 43:
+  [ (0,0), (9,4.82713), (43,6.17699) ]
+shortest path from node 0 to node 44:
+  [ (0,0), (5,4.16849), (26,6.08686), (44,7.76601) ]
+shortest path from node 0 to node 45:
+  [ (0,0), (33,4.92711), (15,6.07292), (27,7.39002), (34,8.9193), (45,10.0305) ]
+shortest path from node 0 to node 46:
+  [ (0,0), (46,5.8294) ]
+shortest path from node 0 to node 47:
+  [ (0,0), (5,4.16849), (47,5.97519) ]
+shortest path from node 0 to node 48:
+  [ (0,0), (33,4.92711), (15,6.07292), (48,7.39141) ]
+shortest path from node 0 to node 49:
+  [ (0,0), (35,6.28506), (49,12.0044) ]
+------------------------
+avg shortest path cost: 8.41455
+/******************************************************************************/
+connected: 1
+------------------------
+(source node) shortest path from node 0 to node 0:
+  [ ]
+shortest path from node 0 to node 1:
+  [ (0,0), (1,2.45683) ]
+shortest path from node 0 to node 2:
+  [ (0,0), (3,2.01834), (2,3.0721) ]
+shortest path from node 0 to node 3:
+  [ (0,0), (3,2.01834) ]
+shortest path from node 0 to node 4:
+  [ (0,0), (25,3.09216), (43,5.49214), (4,6.58363) ]
+shortest path from node 0 to node 5:
+  [ (0,0), (5,4.16849) ]
+shortest path from node 0 to node 6:
+  [ (0,0), (3,2.01834), (6,3.64764) ]
+shortest path from node 0 to node 7:
+  [ (0,0), (25,3.09216), (7,4.44585) ]
+shortest path from node 0 to node 8:
+  [ (0,0), (48,2.70169), (45,4.39976), (8,6.37984) ]
+shortest path from node 0 to node 9:
+  [ (0,0), (9,4.82713) ]
+shortest path from node 0 to node 10:
+  [ (0,0), (3,2.01834), (6,3.64764), (10,6.05286) ]
+shortest path from node 0 to node 11:
+  [ (0,0), (24,3.07408), (11,4.24872) ]
+shortest path from node 0 to node 12:
+  [ (0,0), (1,2.45683), (12,4.03253) ]
+shortest path from node 0 to node 13:
+  [ (0,0), (3,2.01834), (15,3.22403), (27,4.54113), (13,6.2024) ]
+shortest path from node 0 to node 14:
+  [ (0,0), (24,3.07408), (11,4.24872), (14,6.31183) ]
+shortest path from node 0 to node 15:
+  [ (0,0), (3,2.01834), (15,3.22403) ]
+shortest path from node 0 to node 16:
+  [ (0,0), (1,2.45683), (16,3.78454) ]
+shortest path from node 0 to node 17:
+  [ (0,0), (25,3.09216), (7,4.44585), (17,5.91375) ]
+shortest path from node 0 to node 18:
+  [ (0,0), (3,2.01834), (15,3.22403), (18,4.461) ]
+shortest path from node 0 to node 19:
+  [ (0,0), (3,2.01834), (15,3.22403), (37,4.98209), (19,7.08302) ]
+shortest path from node 0 to node 20:
+  [ (0,0), (25,3.09216), (20,5.38685) ]
+shortest path from node 0 to node 21:
+  [ (0,0), (3,2.01834), (2,3.0721), (21,6.5049) ]
+shortest path from node 0 to node 22:
+  [ (0,0), (48,2.70169), (42,5.02343), (22,6.83906) ]
+shortest path from node 0 to node 23:
+  [ (0,0), (23,4.54561) ]
+shortest path from node 0 to node 24:
+  [ (0,0), (24,3.07408) ]
+shortest path from node 0 to node 25:
+  [ (0,0), (25,3.09216) ]
+shortest path from node 0 to node 26:
+  [ (0,0), (25,3.09216), (26,5.06285) ]
+shortest path from node 0 to node 27:
+  [ (0,0), (3,2.01834), (15,3.22403), (27,4.54113) ]
+shortest path from node 0 to node 28:
+  [ (0,0), (3,2.01834), (15,3.22403), (29,4.30837), (28,5.39978) ]
+shortest path from node 0 to node 29:
+  [ (0,0), (3,2.01834), (15,3.22403), (29,4.30837) ]
+shortest path from node 0 to node 30:
+  [ (0,0), (3,2.01834), (15,3.22403), (18,4.461), (30,5.60454) ]
+shortest path from node 0 to node 31:
+  [ (0,0), (3,2.01834), (31,3.80851) ]
+shortest path from node 0 to node 32:
+  [ (0,0), (3,2.01834), (15,3.22403), (32,5.61043) ]
+shortest path from node 0 to node 33:
+  [ (0,0), (3,2.01834), (2,3.0721), (33,4.32244) ]
+shortest path from node 0 to node 34:
+  [ (0,0), (48,2.70169), (45,4.39976), (34,5.51096) ]
+shortest path from node 0 to node 35:
+  [ (0,0), (48,2.70169), (35,6.01476) ]
+shortest path from node 0 to node 36:
+  [ (0,0), (1,2.45683), (36,4.23141) ]
+shortest path from node 0 to node 37:
+  [ (0,0), (3,2.01834), (15,3.22403), (37,4.98209) ]
+shortest path from node 0 to node 38:
+  [ (0,0), (23,4.54561), (38,5.75894) ]
+shortest path from node 0 to node 39:
+  [ (0,0), (24,3.07408), (39,6.5809) ]
+shortest path from node 0 to node 40:
+  [ (0,0), (23,4.54561), (40,5.99107) ]
+shortest path from node 0 to node 41:
+  [ (0,0), (25,3.09216), (41,5.32565) ]
+shortest path from node 0 to node 42:
+  [ (0,0), (48,2.70169), (42,5.02343) ]
+shortest path from node 0 to node 43:
+  [ (0,0), (25,3.09216), (43,5.49214) ]
+shortest path from node 0 to node 44:
+  [ (0,0), (25,3.09216), (26,5.06285), (44,6.742) ]
+shortest path from node 0 to node 45:
+  [ (0,0), (48,2.70169), (45,4.39976) ]
+shortest path from node 0 to node 46:
+  [ (0,0), (46,5.8294) ]
+shortest path from node 0 to node 47:
+  [ (0,0), (1,2.45683), (12,4.03253), (47,5.4632) ]
+shortest path from node 0 to node 48:
+  [ (0,0), (48,2.70169) ]
+shortest path from node 0 to node 49:
+  [ (0,0), (24,3.07408), (11,4.24872), (49,5.331) ]
+------------------------
+avg shortest path cost: 4.94681
