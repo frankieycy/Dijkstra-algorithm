@@ -1,0 +1,70 @@
+---------------------------------------
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 0 1 1 0 1 1 0 1 1 1 1 1 1 0 1 1 1 1 1
+1 1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1
+1 1 1 0 1 0 1 1 1 1 0 1 1 1 0 1 1 1 1 1
+1 0 1 1 0 1 0 1 1 1 0 1 1 1 1 1 1 0 1 1
+1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+1 1 1 1 0 1 0 0 1 1 0 1 1 1 1 1 1 1 1 0
+1 0 1 1 1 1 0 0 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 0
+1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1 1
+1 1 1 0 0 1 0 1 1 0 0 0 1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 0 0 1 0 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 0 1 1 1 1 1 1 1 1 0 1 0 1 1 1 1 1 1
+1 0 1 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1
+1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1
+1 1 1 1 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 0
+---------------------------------------
+connected: 1
+--------------------
+(source node) shortest path from node 0 to node 0:
+  [ ]
+shortest path from node 0 to node 1:
+  [ (0,0), (17,4), (1,5) ]
+shortest path from node 0 to node 2:
+  [ (0,0), (2,2) ]
+shortest path from node 0 to node 3:
+  [ (0,0), (17,4), (12,5), (3,6) ]
+shortest path from node 0 to node 4:
+  [ (0,0), (2,2), (9,3), (8,6), (4,7) ]
+shortest path from node 0 to node 5:
+  [ (0,0), (17,4), (1,5), (6,6), (5,7) ]
+shortest path from node 0 to node 6:
+  [ (0,0), (17,4), (1,5), (6,6) ]
+shortest path from node 0 to node 7:
+  [ (0,0), (2,2), (9,3), (8,6), (4,7), (7,8) ]
+shortest path from node 0 to node 8:
+  [ (0,0), (2,2), (9,3), (8,6) ]
+shortest path from node 0 to node 9:
+  [ (0,0), (2,2), (9,3) ]
+shortest path from node 0 to node 10:
+  [ (0,0), (17,4), (10,8) ]
+shortest path from node 0 to node 11:
+  [ (0,0), (2,2), (11,6) ]
+shortest path from node 0 to node 12:
+  [ (0,0), (17,4), (12,5) ]
+shortest path from node 0 to node 13:
+  [ (0,0), (2,2), (9,3), (13,6) ]
+shortest path from node 0 to node 14:
+  [ (0,0), (2,2), (11,6), (14,7) ]
+shortest path from node 0 to node 15:
+  [ (0,0), (2,2), (15,7) ]
+shortest path from node 0 to node 16:
+  [ (0,0), (17,4), (1,5), (6,6), (5,7), (16,9) ]
+shortest path from node 0 to node 17:
+  [ (0,0), (17,4) ]
+shortest path from node 0 to node 18:
+  [ (0,0), (2,2), (18,7) ]
+shortest path from node 0 to node 19:
+  [ (0,0), (19,5) ]
+--------------------
+avg shortest path cost: 6
+--------------------
+minimum spanning tree:
+[ (17,1), (0,2), (12,3), (8,4), (18,5), (1,6), (4,7), (9,8), (2,9), (7,10), (12,11), (9,12), (9,13), (11,14), (4,15), (5,16), (12,17), (14,18), (15,19) ]
+tree cost: 30

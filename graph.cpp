@@ -1,187 +1,22 @@
-/*
-priority queue, graph & Dijkstra's algorithm - 4/4/2020
-
-instructions:
-- a graph class with random edges and costs
-- implement a priority queue class
-- implement Dijkstra's algorithm for shortest paths
-- compute an average shortest path cost (from a source node)
-
-reference:
-- Wikipedia: Dijkstra's algorithm
-
-explanation and code output:
-- see graph.txt
-*/
+#ifndef GRAPH
+#define GRAPH
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
-#include <ctime>
 #include <vector>
+#include "util.cpp"
 using namespace std;
 
-template <class T>
-ostream& operator<<(ostream& out, const vector<T>& vec){
-    // print elements of a vector
-    if(vec.size()==0) out << "[ ]";
-    else{
-        out << "[ ";
-        for(int i=0; i<vec.size()-1; i++) out << vec[i] << ", ";
-        out << vec[vec.size()-1] << " ]";
-    }
-    return out;
-}
-
-inline double prob(){return static_cast<double>(rand())/RAND_MAX;}
-inline double uniformRand(double min, double max){return min+(max-min)*prob();}
-
-/******************************************************************************/
-
-struct node{
-    // queue element
-    int label;
-    double value;
-    node* next;
-    node(int label, double value):label(label),value(value),next(0){}
+struct edge{
+    // a tuple of int to represent graph edge
+    int node1;
+    int node2;
+    edge(int n, int m):node1(n),node2(m){}
 };
 
-inline ostream& operator<<(ostream& out, const node& n){
-    out << '(' << n.label << ',' << n.value << ')';
+inline ostream& operator<<(ostream& out, const edge& e){
+    out << '(' << e.node1 << ',' << e.node2 << ')';
     return out;
-}
-
-class priorityQueue{
-private:
-    node* head;
-public:
-    /**** constructors ****/
-    priorityQueue();
-    /**** destructors ****/
-    // ~priorityQueue();
-    /**** accessors ****/
-    int getSize();
-    bool isEmpty();
-    bool contains(int label);
-    node peekHeadNode();
-    node peekTailNode();
-    void print();
-    /**** mutators ****/
-    void add(int label, double value);
-    void add(node n);
-    void del(int label);
-    void chgPriority(int label, double value);
-    node popHeadNode();
-};
-
-/**** constructors ****/
-
-priorityQueue::priorityQueue():head(0){}
-
-/**** accessors ****/
-
-int priorityQueue::getSize(){
-    // number of nodes in queue
-    int size = 0;
-    node* p = head;
-    while(p!=0){
-        size++;
-        p = p->next;
-    }
-    return size;
-}
-
-bool priorityQueue::isEmpty(){
-    // check if queue is empty
-    if(head==0) return true;
-    return false;
-}
-
-bool priorityQueue::contains(int label){
-    // check if queue contains node as labelled
-    node* p = head;
-    while(p!=0){
-        if(p->label==label) return true;
-        p = p->next;
-    }
-    return false;
-}
-
-node priorityQueue::peekHeadNode(){
-    // return a copy of head node
-    node n(head->label,head->value);
-    return n;
-}
-
-node priorityQueue::peekTailNode(){
-    // return a copy of tail node
-    node* p = head;
-    while(p->next!=0) p = p->next;
-    node n(p->label,p->value);
-    return n;
-}
-
-void priorityQueue::print(){
-    // print whole queue
-    node* p = head;
-    while(p!=0){
-        cout << *p << " -> ";
-        p = p->next;
-    }
-    cout << "###" << endl;
-}
-
-/**** mutators ****/
-
-void priorityQueue::add(int label, double value){
-    // add new node (label,value)
-    node* n = new node(label,value);
-    node* p;
-    if(head==0 || value>head->value){
-        // empty queue or higher priority than head node
-        n->next = head;
-        head = n;
-    }else{
-        p = head;
-        // stop at node with priority just higher than n->value
-        while(p->next!=0 && p->next->value>=value)
-            p = p->next;
-        n->next = p->next;
-        p->next = n;
-    }
-}
-
-void priorityQueue::add(node n){
-    // add new node
-    add(n.label,n.value);
-}
-
-void priorityQueue::del(int label){
-    // delete node as labelled
-    node* p = head;
-    node* prev;
-    if(contains(label)){
-        while(p->label!=label){
-            prev = p;
-            p = p->next;
-        }
-        if(p==head) head = head->next;
-        else prev->next = p->next;
-        free(p);
-    }
-}
-
-void priorityQueue::chgPriority(int label, double value){
-    // change priority of node as labelled
-    del(label);
-    add(label,value);
-}
-
-node priorityQueue::popHeadNode(){
-    // pop and return a copy of head node
-    node* p = head;
-    head = head->next;
-    node n(p->label,p->value);
-    free(p);
-    return n;
 }
 
 /******************************************************************************/
@@ -195,6 +30,7 @@ private:
 public:
     /**** constructors ****/
     Graph(int size, double density, double minCost, double maxCost);
+    Graph(ifstream& file);
     /**** destructor ****/
     // ~Graph();
     /**** accessors ****/
@@ -206,6 +42,7 @@ public:
     double getCost(int n, int m);
     void printShortestPaths(int n);
     double getAvgShortestPathCost(int n);
+    void printMinSpanningTree(int n);
     /**** mutators ****/
     void addEdge(int n, int m);
     void deleteEdge(int n, int m);
@@ -214,6 +51,7 @@ public:
     /**** algorithms ****/
     bool isConnected();
     vector<node>* shortestPaths(int n);
+    vector<edge> minSpanningTree(int n);
 };
 
 /**** constructors ****/
@@ -239,8 +77,31 @@ Graph::Graph(int size, double density, double minCost, double maxCost){
     // symmetric matrix
     for(int i=0; i<size; i++)
         for(int j=i; j<size; j++)
-            if(i==j) cost[i][j] = 0;
-            else cost[i][j] = cost[j][i] = uniformRand(minCost,maxCost);
+            if(graph[i][j]) cost[i][j] = cost[j][i] = uniformRand(minCost,maxCost);
+}
+
+Graph::Graph(ifstream& file){
+    // construct graph from file
+    // format: 1st line - size, subsequent lines - i j cost
+    int i,j;
+    double c;
+    /**** read size from file ****/
+    file >> size;
+    graph = new bool*[size];
+    for(int i=0; i<size; i++)
+        graph[i] = new bool[size];
+    cost = new double*[size];
+    for(int i=0; i<size; i++)
+        cost[i] = new double[size];
+    /**** read connections & costs from file ****/
+    file >> i >> j >> c;
+    minCost = maxCost = c;
+    do{
+        graph[i][j] = 1; // graph edge matrix
+        cost[i][j] = c; // edge cost matrix
+        if(c<minCost) minCost = c;
+        if(c>maxCost) maxCost = c;
+    }while(file >> i >> j >> c);
 }
 
 /**** accessors ****/
@@ -262,23 +123,23 @@ int Graph::getEdges(){
 void Graph::printGraph(bool matrix=true){
     if(matrix){
         // print adjacency matrix
-        cout << string(2*size-1,'-') << endl;
+        seperator(2*size-1);
         for(int i=0; i<size; i++){
             for(int j=0; j<size; j++)
                 cout << graph[i][j] << ' ';
             cout << endl;
         }
-        cout << string(2*size-1,'-') << endl;
+        seperator(2*size-1);
     }else{
         // print neighbor lists
-        cout << string(2*size-1,'-') << endl;
+        seperator(2*size-1);
         for(int i=0; i<size; i++){
             cout << i << ": ";
             for(int j=0; j<size; j++)
                 if(graph[i][j]==1) cout << j << ' ';
             cout << endl;
         }
-        cout << string(2*size-1,'-') << endl;
+        seperator(2*size-1);
     }
 }
 
@@ -323,6 +184,17 @@ double Graph::getAvgShortestPathCost(int n){
         }
     }
     return totalCost/connectedNodes;
+}
+
+void Graph::printMinSpanningTree(int n){
+    // print edges & cost of minimum spanning tree
+    vector<edge> mst = minSpanningTree(0);
+    double treeCost = 0;
+    for(int i=0; i<mst.size(); i++)
+        treeCost += cost[mst[i].node1][mst[i].node2];
+    cout << "minimum spanning tree:" << endl;
+    cout << mst << endl;
+    cout << "tree cost: " << treeCost << endl;
 }
 
 /**** mutators ****/
@@ -393,7 +265,7 @@ vector<node>* Graph::shortestPaths(int n){
     nodeCost[n] = 0; // start from node n
     for(int i=0; i<size; i++){
         closed[i] = false;
-        prev[i] = -1;
+        prev[i] = -1; // flag value
         if(i!=n) nodeCost[i] = inf;
         // prioirty: -cost
         node tmpNode(i,-nodeCost[i]);
@@ -402,6 +274,7 @@ vector<node>* Graph::shortestPaths(int n){
     // q.print();
 
     /**** uniform cost search ****/
+    // loop until queue is empty or remaining nodes are disconnected
     while(!q.isEmpty() && q.peekHeadNode().value!=-inf){
         current = q.popHeadNode().label; // pop node with lowest cost
         for(int i=0; i<size; i++)
@@ -438,20 +311,45 @@ vector<node>* Graph::shortestPaths(int n){
     return paths;
 }
 
-/******************************************************************************/
+vector<edge> Graph::minSpanningTree(int n){
+    // Prim's minimum spanning tree for a connected graph
+    // return a vector of edges
+    const int inf = size*maxCost;
+    vector<edge> mst; // minimum spanning tree
+    int current; // node currently being explored
+    int* prev = new int[size];
+    double* nodeCost = new double[size]; // tentative cheapest edge cost
+    priorityQueue q; // priority queue for uniform cost search
 
-int main(){
-    srand(0);
-    const int source=0; // source node shortest path search
-    const int size=50; // number of nodes
-    const double density=.2, minCost=1, maxCost=10; // density and cost range
-    // const double density=.4, minCost=1, maxCost=10;
-    Graph g(size,density,minCost,maxCost); // construct graph
-    // g.printGraph(); // print adjacency matrix
-    cout << "connected: " << g.isConnected() << endl; // check connectedness
-    cout << "------------------------" << endl;
-    g.printShortestPaths(source); // print shortest paths from source node to other nodes
-    cout << "------------------------" << endl;
-    cout << "avg shortest path cost: " << g.getAvgShortestPathCost(source) << endl; // compute average shortest path cost
-    return 0;
+    /**** initialization ****/
+    nodeCost[n] = 0; // start from node n
+    for(int i=0; i<size; i++){
+        prev[i] = -1; // flag value
+        if(i!=n) nodeCost[i] = inf;
+        // prioirty: -cost
+        node tmpNode(i,-nodeCost[i]);
+        q.add(tmpNode);
+    }
+    // q.print();
+
+    /**** uniform cost search ****/
+    // loop until queue is empty
+    while(!q.isEmpty()){
+        current = q.popHeadNode().label; // pop node with lowest cost
+        for(int i=0; i<size; i++)
+            if(graph[current][i]) // neighbors of current node
+                if(q.contains(i) && cost[current][i]<nodeCost[i]){
+                    nodeCost[i] = cost[current][i];
+                    prev[i] = current;
+                    q.chgPriority(i,-cost[current][i]);
+                }
+        // q.print(); // show the search
+    }
+
+    /**** collect edges into mst ****/
+    for(int i=0; i<size; i++)
+        if(i!=n) mst.push_back(edge(prev[i],i));
+    return mst;
 }
+
+#endif
