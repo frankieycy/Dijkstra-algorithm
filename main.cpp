@@ -1,7 +1,6 @@
 /*
 graph, shortest path search & minimum spanning tree - 7/4/2020
 */
-#include "util.cpp"
 #include "graph.cpp"
 using namespace std;
 

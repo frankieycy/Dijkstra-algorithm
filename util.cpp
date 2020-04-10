@@ -1,6 +1,7 @@
 #ifndef UTIL
 #define UTIL
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <vector>
 using namespace std;
